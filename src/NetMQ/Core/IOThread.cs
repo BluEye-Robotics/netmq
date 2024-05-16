@@ -91,8 +91,7 @@ namespace NetMQ.Core
             // Process all available commands.
             while (m_mailbox.TryRecv(out Command command))
             {
-                Assumes.NotNull(command.Destination);
-                command.Destination.ProcessCommand(command);
+                command.Destination?.ProcessCommand(command);
             }
         }
 

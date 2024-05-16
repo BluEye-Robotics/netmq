@@ -126,10 +126,8 @@ namespace NetMQ.Core
                 if (!m_mailbox.TryRecv(0, out Command command))
                     break;
 
-                Assumes.NotNull(command.Destination);
-
                 // Process the command.
-                command.Destination.ProcessCommand(command);
+                command.Destination?.ProcessCommand(command);
             }
         }
 
