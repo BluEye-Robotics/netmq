@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -30,24 +31,26 @@ namespace NetMQ.Tests
             }
         }
 
-        internal static bool WaitAll(Task[] tasks, TimeSpan timeout)
+        internal static bool WaitAll(IEnumerable<Task> tasks, TimeSpan timeout)
         {
-            return PollUntil(() => tasks.All(t => t.IsCompleted), timeout).Status == TaskStatus.RanToCompletion;
+            PollUntil(() => tasks.All(t => t.IsCompleted), timeout).Wait();
+            return tasks.All(t => t.Status == TaskStatus.RanToCompletion);
         }
 
-        internal static bool WaitAll(Task[] tasks)
+        internal static void WaitAll(IEnumerable<Task> tasks)
         {
-            return WaitAll(tasks, TimeSpan.MaxValue);
+            PollUntil(() => tasks.All(t => t.IsCompleted), Timeout.InfiniteTimeSpan).Wait();
         }
 
         internal static bool Wait(Task task, TimeSpan timeout)
         {
-            return PollUntil(() => task.IsCompleted, timeout).Status == TaskStatus.RanToCompletion;
+            PollUntil(() => task.IsCompleted, timeout).Wait();
+            return task.Status == TaskStatus.RanToCompletion;
         }
 
-        internal static bool Wait(Task task)
+        internal static void Wait(Task task)
         {
-            return Wait(task, TimeSpan.MaxValue);
+            PollUntil(() => task.IsCompleted, Timeout.InfiniteTimeSpan).Wait();
         }
     }
 }

@@ -984,7 +984,7 @@ namespace NetMQ.Tests
 
                 TaskUtils.Wait(t1, TimeSpan.FromMilliseconds(1000));
                 TaskUtils.Wait(t2, TimeSpan.FromMilliseconds(1000));
-                TaskUtils.WaitAll(allTasks.ToArray(), TimeSpan.FromMilliseconds(1000));
+                TaskUtils.WaitAll(allTasks, TimeSpan.FromMilliseconds(1000));
 
                 Assert.Equal(100, count1);
                 Assert.Equal(100, count2);
