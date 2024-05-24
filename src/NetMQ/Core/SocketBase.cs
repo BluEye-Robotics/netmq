@@ -1261,7 +1261,8 @@ namespace NetMQ.Core
             // Process all the commands available at the moment.
             while (found)
             {
-                command.Destination?.ProcessCommand(command);
+                Assumes.NotNull(command.Destination);
+                command.Destination.ProcessCommand(command);
                 found = m_mailbox.TryRecv(0, out command);
             }
 
