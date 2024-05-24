@@ -134,7 +134,7 @@ namespace NetMQ.Tests
                 t1.Start();
                 t2.Start();
 
-                Task.WaitAll(t1, t2);
+                Utils.Tasks.WaitAll(new[]{t1, t2});
             }
         }
 

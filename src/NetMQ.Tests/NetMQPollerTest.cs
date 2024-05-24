@@ -395,7 +395,7 @@ namespace NetMQ.Tests
 
                 poller.Stop();
                 // await the pollerTask, 1ms should suffice
-                pollerTask.Wait(1);
+                Utils.Tasks.Wait(pollerTask, TimeSpan.FromMilliseconds(1));
                 Assert.True(pollerTask.IsCompleted);
             }
         }
@@ -879,7 +879,7 @@ namespace NetMQ.Tests
                     Assert.True(poller.CanExecuteTaskInline, "Should be on NetMQPoller thread");
                 });
                 task.Start(poller);
-                task.Wait();
+                Utils.Tasks.Wait(task);
 
                 Assert.True(triggered);
             }
@@ -894,7 +894,7 @@ namespace NetMQ.Tests
 
                 var task = new Task(() => Assert.Same(TaskScheduler.Current, poller));
                 task.Start(poller);
-                task.Wait();
+                Utils.Tasks.Wait(task);
             }
         }
 
@@ -911,7 +911,7 @@ namespace NetMQ.Tests
 
                 var task = new Task(() => Assert.True(poller.CanExecuteTaskInline));
                 task.Start(poller);
-                task.Wait();
+                Utils.Tasks.Wait(task);
             }
         }
 
@@ -941,8 +941,8 @@ namespace NetMQ.Tests
                 }, poller);
 
                 task.Start(poller);
-                task.Wait();
-                task2.Wait();
+                Utils.Tasks.Wait(task);
+                Utils.Tasks.Wait(task2);
 
                 Assert.Equal(threadId1, threadId2);
                 Assert.Equal(1, runCount1);
@@ -982,9 +982,9 @@ namespace NetMQ.Tests
                     }
                 });
 
-                t1.Wait(1000);
-                t2.Wait(1000);
-                Task.WaitAll(allTasks.ToArray(), 1000);
+                Utils.Tasks.Wait(t1, TimeSpan.FromMilliseconds(1000));
+                Utils.Tasks.Wait(t2, TimeSpan.FromMilliseconds(1000));
+                Utils.Tasks.WaitAll(allTasks.ToArray(), TimeSpan.FromMilliseconds(1000));
 
                 Assert.Equal(100, count1);
                 Assert.Equal(100, count2);
