@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace NetMQ.Utils
+namespace NetMQ.Tests
 {
-    internal class Tasks
+    internal class TaskUtils
     {
         internal static async Task PollUntil(Func<bool> condition, TimeSpan timeout)
         {

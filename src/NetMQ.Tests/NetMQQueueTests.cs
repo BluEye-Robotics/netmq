@@ -39,7 +39,7 @@ namespace NetMQ.Tests
                     }
                 });
 
-                bool completed = Utils.Tasks.Wait(task, TimeSpan.FromSeconds(1));
+                bool completed = TaskUtils.Wait(task, TimeSpan.FromSeconds(1));
                 Assert.True(completed, "Enqueue task should have completed " + socketWatermarkCapacity + " enqueue within 1 second");
             }
         }
