@@ -46,3 +46,6 @@ _ReSharper*/
 #Ignore lock files
 *.lock.json
 .idea/
+
+# Ignore Mac files
+.DS_Store
