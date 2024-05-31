@@ -9,7 +9,7 @@ namespace NetMQ.Core.Transports
         private const int MessageReadyState = 1;
 
         private readonly ByteArraySegment m_tmpbuf = new byte[9];
-        
+
         public V2Encoder(int bufferSize, Endianness endian)
             : base(bufferSize, endian)
         {
@@ -24,7 +24,7 @@ namespace NetMQ.Core.Transports
                 case SizeReadyState:
                     SizeReady();
                     break;
-                    
+
                 case MessageReadyState:
                     MessageReady();
                     break;
@@ -33,17 +33,17 @@ namespace NetMQ.Core.Transports
 
         private void SizeReady()
         {
-            Assumes.NotNull(m_inProgress.UnsafeData);
-
             // Write message body into the buffer.
-            NextStep(new ByteArraySegment(m_inProgress.UnsafeData, m_inProgress.UnsafeOffset),
-                m_inProgress.Size, MessageReadyState, true);
+            // Write message body into the buffer.
+            byte[] unsafeData = m_inProgress.UnsafeData ?? new byte[0];
+            NextStep(new ByteArraySegment(unsafeData, m_inProgress.UnsafeOffset),
+	            m_inProgress.Size, MessageReadyState, true);
         }
 
         private void MessageReady()
         {
             m_tmpbuf.Reset();
-            
+
             int protocolFlags = 0;
             if (m_inProgress.HasMore)
                 protocolFlags |= V2Protocol.MoreFlag;
