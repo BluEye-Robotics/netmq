@@ -233,9 +233,7 @@ namespace NetMQ.Core
             m_active = true;
 
             // Get a command.
-            var ok = m_commandPipe.TryRead(out command);
-            Debug.Assert(ok);
-            return ok;
+            return m_commandPipe.TryRead(out command);
         }
 
         /// <summary>
