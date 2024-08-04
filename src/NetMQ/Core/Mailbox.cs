@@ -229,11 +229,9 @@ namespace NetMQ.Core
                 return false;
             }
 
-            // We've got the signal. Now we can switch into active state.
-            m_active = true;
-
-            // Get a command.
-            return m_commandPipe.TryRead(out command);
+            // We've got the signal. Now we can switch into active state if we can read.
+            m_active = m_commandPipe.TryRead(out command);
+            return m_active;
         }
 
         /// <summary>
