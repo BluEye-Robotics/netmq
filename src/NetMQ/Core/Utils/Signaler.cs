@@ -92,6 +92,7 @@ namespace NetMQ.Core.Utils
 
         public void Send()
         {
+            if (!m_writeSocket.Connected) return;
             int sent = m_writeSocket.Send(m_dummy);
 
             Debug.Assert(sent == 1);
