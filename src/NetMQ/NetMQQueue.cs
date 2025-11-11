@@ -1,4 +1,3 @@
-#if !NET35
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -57,7 +56,7 @@ namespace NetMQ
             m_dequeueMsg.InitEmpty();
         }
 
-        private void OnReceiveReady(object sender, NetMQSocketEventArgs e)
+        private void OnReceiveReady(object? sender, NetMQSocketEventArgs e)
         {
             m_eventDelegator.Fire(this, new NetMQQueueEventArgs<T>(this));
         }
@@ -94,7 +93,7 @@ namespace NetMQ
         /// <param name="result">Will be filled with the item upon success</param>
         /// <param name="timeout">Timeout to try and dequeue and item</param>
         /// <returns>Will return false if it didn't succeed to dequeue an item after the timeout.</returns>
-        public bool TryDequeue([MaybeNull] out T result, TimeSpan timeout)
+        public bool TryDequeue([MaybeNullWhen(false)] out T result, TimeSpan timeout)
         {
             if (m_reader.TryReceive(ref m_dequeueMsg, timeout))
             {
@@ -111,11 +110,11 @@ namespace NetMQ
         /// Dequeue an item from the queue, will block if queue is empty. Dequeueing and item is not thread safe.
         /// </summary>
         /// <returns>Dequeued item</returns>
-        public T Dequeue()
+        public T? Dequeue()
         {
             m_reader.TryReceive(ref m_dequeueMsg, SendReceiveConstants.InfiniteTimeout);
 
-            m_queue.TryDequeue(out T result);
+            m_queue.TryDequeue(out T? result);
 
             return result;
         }
@@ -129,7 +128,7 @@ namespace NetMQ
             m_queue.Enqueue(value);
 
             var msg = new Msg();
-            msg.InitGC(EmptyArray<byte>.Instance, 0);
+            msg.InitGC([], 0);
 
             lock (m_writer)
                 m_writer.TrySend(ref msg, SendReceiveConstants.InfiniteTimeout, false);
@@ -163,4 +162,3 @@ namespace NetMQ
         }
     }
 }
-#endif

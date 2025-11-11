@@ -283,6 +283,21 @@ namespace NetMQ
             // See  http://api.zeromq.org/3-2:zmq-getsockopt
         }
 
+
+        /// <summary>
+        /// Get or set the maximum number of TCP keepalive probes to send before dropping the connection.
+        /// </summary>
+        /// <remarks>
+        /// This value determines how many unacknowledged keepalive probes TCP should send before assuming the connection is dead.
+        /// A lower value means faster detection of dead peers, while a higher value allows more tolerance for temporary disruptions.
+        /// A value of -1 (the default) means to use the OS default setting.
+        /// </remarks>
+        public int TcpKeepaliveCnt
+        {
+            get => m_socket.GetSocketOption(ZmqSocketOption.TcpKeepaliveCnt);
+            set => m_socket.SetSocketOption(ZmqSocketOption.TcpKeepaliveCnt, value);
+        }
+
         /// <summary>
         /// Get or set the keep-alive time - the duration between two keepalive transmissions in idle condition.
         /// The TCP keepalive period is required by socket implementers to be configurable and by default is
@@ -496,6 +511,15 @@ namespace NetMQ
         public byte[] HelloMessage
         {
             set => m_socket.SetSocketOption(ZmqSocketOption.HelloMessage, value);
+        }
+
+
+        /// <summary>
+        /// Set a disconnect message that the socket will generate when accepted peer disconnect
+        /// </summary>
+        public byte[] DisconnectMessage
+        {
+            set => m_socket.SetSocketOption(ZmqSocketOption.DisconnectMessage, value);
         }
 
         /// <summary>

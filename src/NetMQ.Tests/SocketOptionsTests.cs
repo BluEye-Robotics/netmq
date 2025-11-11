@@ -77,8 +77,8 @@ namespace NetMQ.Tests
                 socket.Options.TcpKeepalive = true;
                 Assert.True(socket.Options.TcpKeepalive);
 
-//                socket.Options.TcpKeepaliveCnt = 100;
-//                Assert.Equal(100, socket.Options.TcpKeepaliveCnt);
+                socket.Options.TcpKeepaliveCnt = 100;
+                Assert.Equal(100, socket.Options.TcpKeepaliveCnt);
 
                 socket.Options.TcpKeepaliveIdle = TimeSpan.FromMilliseconds(100);
                 Assert.Equal(TimeSpan.FromMilliseconds(100), socket.Options.TcpKeepaliveIdle);
@@ -146,6 +146,66 @@ namespace NetMQ.Tests
             var msg = dealer.ReceiveFrameString();
             
             Assert.Equal("H", msg);
+        }
+
+
+        [Fact]
+        public void DisconnectMsgInProc()
+        {
+            // Create a router
+            using var router = new RouterSocket();
+            router.Options.DisconnectMessage = new byte[] {(byte)'D'};
+            
+            // bind router
+            router.Bind("inproc://inproc-hello-msg");
+            
+            // create a dealer
+            using var dealer = new DealerSocket();
+            dealer.Options.HelloMessage = new byte[] {(byte)'H'};
+            dealer.Connect("inproc://inproc-hello-msg");
+
+            var msg = router.ReceiveMultipartMessage();
+            
+            Assert.Equal("H", msg.Last.ConvertToString());
+
+            dealer.Close();
+
+            var routerMsg = router.ReceiveMultipartMessage();
+           
+
+            Assert.Equal("D",
+             routerMsg.Last.ConvertToString());
+
+        }
+
+
+        [Fact]
+        public void DisconnectMsgTcp()
+        {
+            // Create a router
+            using var router = new RouterSocket();
+            router.Options.DisconnectMessage = new byte[] {(byte)'D'};
+            
+            // bind router
+            int port = router.BindRandomPort("tcp://*");
+            
+            // create a dealer
+            using var dealer = new DealerSocket();
+            dealer.Options.HelloMessage = new byte[] {(byte)'H'};
+            dealer.Connect($"tcp://localhost:{port}");
+
+            var msg = router.ReceiveMultipartMessage();
+            
+            Assert.Equal("H", msg.Last.ConvertToString());
+
+            dealer.Close();
+
+            var routerMsg = router.ReceiveMultipartMessage();
+           
+
+            Assert.Equal("D",
+                routerMsg.Last.ConvertToString());
+
         }
     }
 }

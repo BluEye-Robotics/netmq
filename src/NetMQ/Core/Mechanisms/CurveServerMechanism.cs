@@ -1,7 +1,5 @@
 using System;
-using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
 using NaCl;
 using NetMQ.Core.Utils;
 
@@ -157,7 +155,7 @@ namespace NetMQ.Core.Mechanisms
             //  8-byte prefix plus 16-byte random nonce
             CookieNoncePrefix.CopyTo(cookieNonce);
             using var rng = RandomNumberGenerator.Create();
-#if NETSTANDARD2_1
+#if NETSTANDARD || NET
             rng.GetBytes(cookieNonce.Slice(8));
 #else
             byte[] temp = new byte[16];
@@ -184,7 +182,7 @@ namespace NetMQ.Core.Mechanisms
             //  Create full nonce for encryption
             //  8-byte prefix plus 16-byte random nonce
             WelcomeNoncePrefix.CopyTo(welcomeNonce);
-#if NETSTANDARD2_1
+#if NETSTANDARD || NET
             rng.GetBytes(welcomeNonce.Slice(8));
 #else
             rng.GetBytes(temp);

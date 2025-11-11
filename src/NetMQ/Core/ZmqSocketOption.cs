@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace NetMQ.Core
+﻿namespace NetMQ.Core
 {
     /// <summary>
     /// This enum-type serves to identity a particular socket-option.
@@ -200,6 +198,15 @@ namespace NetMQ.Core
         TcpKeepalive = 34,
 
         /// <summary>
+        /// The maximum number of keepalive probes TCP should send before dropping the connection.
+        /// </summary>
+        /// <remarks>
+        /// This setting controls how many unacknowledged probes are sent before the connection is considered dead.
+        /// A value of -1 (the default) means to use the OS default setting.
+        /// </remarks>
+        TcpKeepaliveCnt = 35,
+
+        /// <summary>
         /// The keep-alive time - the duration between two keepalive transmissions in idle condition.
         /// </summary>
         /// <remarks>
@@ -337,6 +344,11 @@ namespace NetMQ.Core
         /// </summary>
         HelloMessage = 57,
         
+        /// <summary>
+        /// Disconnect Message to be generated on router upon disconnecting of client
+        /// </summary>
+        DisconnectMessage = 60,
+
         /// <summary>
         /// Specifies the byte-order: big-endian, vs little-endian.
         /// </summary>

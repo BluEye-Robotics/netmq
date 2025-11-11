@@ -82,8 +82,6 @@ namespace NetMQ.Tests
             await Assert.ThrowsAnyAsync<OperationCanceledException>(async () => await server.ReceiveStringAsync(source.Token));
         }
 
-#if NETCOREAPP3_1
-
         [Fact(Timeout = 120)]
         public async Task AsyncEnumerableCanceled()
         {
@@ -100,7 +98,7 @@ namespace NetMQ.Tests
         }
         
         [Fact(Timeout = 1000)]
-        public void AsyncEnumerable()
+        public async Task AsyncEnumerable()
         {
             using var server = new ServerSocket();
             int port = server.BindRandomPort("tcp://*");
@@ -152,12 +150,10 @@ namespace NetMQ.Tests
             client.Send("1");
             client.Send("1");
 
-            t1.Wait();
-            t2.Wait();
+            await Task.WhenAll(t1, t2);
             
             Assert.Equal(15002, totalCount);
         }
 
-#endif
     }
 }

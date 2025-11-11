@@ -45,7 +45,10 @@ _ReSharper*/
 
 #Ignore lock files
 *.lock.json
+
+# Ignore JetBrains Rider files
 .idea/
+/src/*.DotSettings
 
 # Ignore Mac files
 .DS_Store

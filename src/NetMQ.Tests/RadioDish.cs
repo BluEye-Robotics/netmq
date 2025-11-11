@@ -57,7 +57,7 @@ namespace NetMQ.Tests
             int port = radio.BindRandomPort("tcp://*");
             dish.Connect($"tcp://127.0.0.1:{port}");
             
-            Thread.Sleep(100);
+            await Task.Delay(100);
 
             await radio.SendAsync("1", "HELLO");
             await radio.SendAsync("2", "HELLO");

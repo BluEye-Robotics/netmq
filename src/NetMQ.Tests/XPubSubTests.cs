@@ -377,7 +377,7 @@ namespace NetMQ.Tests
 
                 var subscription = pub.ReceiveFrameBytes();
 
-                Assert.Equal((byte)'W', subscription[1]);
+                Assert.Equal( (byte)'W', subscription[1]);
 
                 Assert.False(sub.TrySkipFrame());
             }

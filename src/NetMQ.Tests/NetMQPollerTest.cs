@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
@@ -7,10 +9,6 @@ using System.Threading.Tasks;
 using NetMQ.Monitoring;
 using NetMQ.Sockets;
 using Xunit;
-
-#if !NET35
-using System.Collections.Concurrent;
-#endif
 
 // ReSharper disable AccessToDisposedClosure
 
@@ -318,7 +316,7 @@ namespace NetMQ.Tests
 
 
         [Fact]
-        public void RemoveSocket()
+        public async Task RemoveSocket()
         {
             using (var router1 = new RouterSocket())
             using (var router2 = new RouterSocket())
@@ -395,8 +393,8 @@ namespace NetMQ.Tests
 
                 poller.Stop();
                 // await the pollerTask, 1ms should suffice
-                TaskUtils.Wait(pollerTask, TimeSpan.FromMilliseconds(1));
-                Assert.True(pollerTask.IsCompleted);
+                var completedTask = await Task.WhenAny(pollerTask, Task.Delay(1));
+                Assert.Equal(pollerTask, completedTask);
             }
         }
 
@@ -863,9 +861,8 @@ namespace NetMQ.Tests
 
         #region TaskScheduler tests
 
-#if !NET35
         [Fact]
-        public void OneTask()
+        public async Task OneTask()
         {
             bool triggered = false;
 
@@ -879,14 +876,14 @@ namespace NetMQ.Tests
                     Assert.True(poller.CanExecuteTaskInline, "Should be on NetMQPoller thread");
                 });
                 task.Start(poller);
-                TaskUtils.Wait(task);
+                await task;
 
                 Assert.True(triggered);
             }
         }
 
         [Fact]
-        public void SetsCurrentTaskScheduler()
+        public async Task  SetsCurrentTaskScheduler()
         {
             using (var poller = new NetMQPoller())
             {
@@ -894,12 +891,12 @@ namespace NetMQ.Tests
 
                 var task = new Task(() => Assert.Same(TaskScheduler.Current, poller));
                 task.Start(poller);
-                TaskUtils.Wait(task);
+                await task;
             }
         }
 
         [Fact]
-        public void CanExecuteTaskInline()
+        public async Task CanExecuteTaskInline()
         {
             using (var poller = new NetMQPoller())
             {
@@ -911,12 +908,12 @@ namespace NetMQ.Tests
 
                 var task = new Task(() => Assert.True(poller.CanExecuteTaskInline));
                 task.Start(poller);
-                TaskUtils.Wait(task);
+                await task;
             }
         }
 
         [Fact]
-        public void ContinueWith()
+        public async Task ContinueWith()
         {
             int threadId1 = 0;
             int threadId2 = 1;
@@ -941,8 +938,7 @@ namespace NetMQ.Tests
                 }, poller);
 
                 task.Start(poller);
-                TaskUtils.Wait(task);
-                TaskUtils.Wait(task2);
+                await Task.WhenAll(new List<Task>{task, task2});
 
                 Assert.Equal(threadId1, threadId2);
                 Assert.Equal(1, runCount1);
@@ -951,7 +947,7 @@ namespace NetMQ.Tests
         }
 
         [Fact]
-        public void TwoThreads()
+        public async Task TwoThreads()
         {
             int count1 = 0;
             int count2 = 0;
@@ -982,21 +978,18 @@ namespace NetMQ.Tests
                     }
                 });
 
-                TaskUtils.Wait(t1, TimeSpan.FromMilliseconds(1000));
-                TaskUtils.Wait(t2, TimeSpan.FromMilliseconds(1000));
-                TaskUtils.WaitAll(allTasks, TimeSpan.FromMilliseconds(1000));
+                 await Task.WhenAny(Task.WhenAll(new List<Task>{ t1, t2 }), Task.Delay(1000));
+                 await Task.WhenAny(Task.WhenAll(allTasks.ToArray()), Task.Delay(1000));
 
                 Assert.Equal(100, count1);
                 Assert.Equal(100, count2);
             }
         }
-#endif
 
         #endregion
 
         #region ISynchronizeInvoke tests
 
-#if NET451
         [Fact]
         public void ISynchronizeInvokeWorks()
         {
@@ -1018,8 +1011,7 @@ namespace NetMQ.Tests
                 Assert.True(isCorrectThread);
             }
         }
-#endif
 
-#endregion
+        #endregion
     }
 }

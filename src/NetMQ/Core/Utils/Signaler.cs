@@ -50,7 +50,7 @@ namespace NetMQ.Core.Utils
 
                 m_writeSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Unspecified) { NoDelay = true };
 
-                m_writeSocket.Connect(listener.LocalEndPoint);
+                m_writeSocket.Connect(listener.LocalEndPoint!);
                 m_readSocket = listener.Accept();
             }
 
@@ -72,22 +72,14 @@ namespace NetMQ.Core.Utils
 
             try
             {
-#if NET35
-                m_writeSocket.Close();
-#else
                 m_writeSocket.Dispose();
-#endif
             }
             catch (SocketException)
             {}
 
             try
             {
-#if NET35
-                m_readSocket.Close();
-#else
                 m_readSocket.Dispose();
-#endif
             }
             catch (SocketException)
             {}
