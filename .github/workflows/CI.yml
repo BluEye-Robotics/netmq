@@ -14,4 +14,4 @@ jobs:
       - name: Build
         run: dotnet build src/NetMQ/NetMQ.csproj -c Release /p:TargetFrameworks=net10.0 && dotnet build src/NetMQ.Tests/NetMQ.Tests.csproj -c Release
       - name: Test
-        run: dotnet test src/NetMQ.Tests/NetMQ.Tests.csproj -c Release --no-build -f net10.0 -p:ParallelizeTestCollections=false --filter "ClassName!=NetMQ.Tests.BeaconTests&ClassName!=NetMQ.Tests.PgmTests"
+        run: dotnet test src/NetMQ.Tests/NetMQ.Tests.csproj -c Release --no-build -p:ParallelizeTestCollections=false --filter "ClassName!=NetMQ.Tests.BeaconTests&ClassName!=NetMQ.Tests.PgmTests"
