@@ -34,7 +34,7 @@
   <ItemGroup>
     <PackageReference Include="AsyncIO" Version="0.1.69" />
     <PackageReference Include="NaCl.Net" Version="0.1.13" />
-    <PackageReference Include="System.ServiceModel.Primitives" Version="8.1.2" />
+    <PackageReference Include="System.ServiceModel.Primitives" Version="10.0.652802" />
   </ItemGroup>
 
   <ItemGroup>
