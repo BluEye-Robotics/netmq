@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Description>A 100% native C# port of the lightweight high performance messaging library ZeroMQ</Description>
     <Version>4.0.3</Version>
-    <TargetFrameworks>net10.0;net10.0-ios;net10.0-android</TargetFrameworks>
+    <TargetFrameworks Condition="'$(TargetFrameworks)' == ''">net10.0;net10.0-ios;net10.0-android</TargetFrameworks>
     <DebugType>portable</DebugType>
     <AssemblyOriginatorKeyFile>./NetMQ.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
