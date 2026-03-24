@@ -75,8 +75,6 @@ namespace NetMQ.Core.Patterns.Utils
                 return result;
             }
 
-            Debug.Assert(prefix != null);
-
             byte currentCharacter = prefix[0];
 
             if (currentCharacter < m_minCharacter || currentCharacter >= m_minCharacter + m_count)

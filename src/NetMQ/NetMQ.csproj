@@ -22,6 +22,8 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <IsTrimmable>false</IsTrimmable>
+    <NoWarn>$(NoWarn);IL2026;IL2075</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
