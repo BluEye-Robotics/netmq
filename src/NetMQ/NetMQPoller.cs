@@ -722,8 +722,30 @@ namespace NetMQ
             m_sockets.Remove(((ISocketPollable)m_stopSignaler).Socket);
             m_stopSignaler.Dispose();
 
+            // Capture any tasks scheduled after the poller stopped but before disposal began.
+            // Discarding them with the queue would leave awaiting continuations hanging forever.
+            // Enumerate the backing queue directly rather than TryDequeue, which depends on
+            // socket signalling that is unavailable once the poller thread has exited.
+            // TryExecuteTask is a no-op for tasks the poller already executed.
+            var remainingTasks = new List<Task>();
+            foreach (var task in m_tasksQueue)
+                remainingTasks.Add(task);
+
             m_sockets.Remove(((ISocketPollable)m_tasksQueue).Socket);
             m_tasksQueue.Dispose();
+
+            if (remainingTasks.Count > 0)
+            {
+                // Run them on the thread pool, in order, rather than on the disposing
+                // thread: arbitrary continuations executing inside Dispose could block it
+                // or deadlock with locks held by the caller. This matches where
+                // NetMQSynchronizationContext sends callbacks once the poller is disposed.
+                ThreadPool.QueueUserWorkItem(_ =>
+                {
+                    foreach (var task in remainingTasks)
+                        TryExecuteTask(task);
+                });
+            }
 
             foreach (var socket in m_sockets)
             {

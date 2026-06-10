@@ -442,6 +442,52 @@ namespace NetMQ.Tests
         }
 
         [Fact]
+        public void TaskStartedAfterStopRunsWhenPollerIsDisposed()
+        {
+            var poller = new NetMQPoller();
+            poller.RunAsync();
+            poller.Stop();
+
+            // The poller thread has exited, so this task can only run if Dispose drains the queue.
+            var executed = new ManualResetEventSlim();
+            new Task(() => executed.Set()).Start(poller);
+
+            poller.Dispose();
+
+            Assert.True(executed.Wait(1000));
+        }
+
+        [Fact]
+        public void SynchronizationContextPostAfterDisposeRunsCallbackOnThreadPool()
+        {
+            var poller = new NetMQPoller();
+            var syncContext = new NetMQSynchronizationContext(poller);
+            poller.RunAsync();
+            poller.Dispose();
+
+            // Simulates an await continuation captured on the poller thread that resumes
+            // after the poller is disposed. Must neither throw nor be dropped.
+            var executed = new ManualResetEventSlim();
+            syncContext.Post(_ => executed.Set(), null);
+
+            Assert.True(executed.Wait(1000));
+        }
+
+        [Fact]
+        public void SynchronizationContextSendAfterDisposeRunsCallbackInline()
+        {
+            var poller = new NetMQPoller();
+            var syncContext = new NetMQSynchronizationContext(poller);
+            poller.RunAsync();
+            poller.Dispose();
+
+            var executed = false;
+            syncContext.Send(_ => executed = true, null);
+
+            Assert.True(executed);
+        }
+
+        [Fact]
         public void DisposeThrowsIfSocketAlreadyDisposed()
         {
             var socket = new RouterSocket();
