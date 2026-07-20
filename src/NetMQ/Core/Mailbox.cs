@@ -213,8 +213,12 @@ namespace NetMQ.Core
                     m_active = false;
                     m_signaler.Recv();
                 }
-                catch
+                catch (SocketException)
                 {
+                    // Only transient signaler failures are retryable. Catching
+                    // everything here used to swallow ObjectDisposedException too,
+                    // which made a send on a disposed socket loop forever instead
+                    // of surfacing the error to the caller (upstream PR #1140).
                     m_active = true;
                     command = default(Command);
                     return false;
