@@ -45,7 +45,7 @@
   <!-- System.Collections.Immutable is in the BCL for net10.0+; only needed as an
        explicit reference for .NETFramework (net472) and .NETStandard (netstandard2.1). -->
   <ItemGroup Condition=" '$(TargetFrameworkIdentifier)' != '.NETCoreApp' ">
-    <PackageReference Include="System.Collections.Immutable" Version="10.0.7" />
+    <PackageReference Include="System.Collections.Immutable" Version="10.0.12" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFrameworkIdentifier)' != '.NETFramework' ">
@@ -55,13 +55,13 @@
   <ItemGroup Condition=" '$(TargetFrameworkIdentifier)' == '.NETFramework' ">
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="All" />
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.6.3" />
-    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.6" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.12" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.301" />
+    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.401" />
   </ItemGroup>
 </Project>
