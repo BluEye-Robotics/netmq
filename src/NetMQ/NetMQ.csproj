@@ -3,7 +3,9 @@
   <PropertyGroup>
     <Description>A 100% native C# port of the lightweight high performance messaging library ZeroMQ</Description>
     <Version>4.0.3</Version>
-    <TargetFrameworks Condition="'$(TargetFrameworks)' == ''">net10.0;net10.0-ios;net10.0-android</TargetFrameworks>
+    <!-- The iOS workload cannot be installed on Linux, so a Linux host builds only the other targets. -->
+    <TargetFrameworks Condition="'$(TargetFrameworks)' == '' and !$([MSBuild]::IsOSPlatform('Linux'))">net10.0;net10.0-ios;net10.0-android</TargetFrameworks>
+    <TargetFrameworks Condition="'$(TargetFrameworks)' == ''">net10.0;net10.0-android</TargetFrameworks>
     <DebugType>portable</DebugType>
     <AssemblyOriginatorKeyFile>./NetMQ.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
